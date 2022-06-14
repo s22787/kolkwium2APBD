@@ -21,7 +21,7 @@ namespace kolos2.Controllers
         public async Task<IActionResult> Get(int id) 
         {
             if (!await _service.MusExists(id))
-                return StatusCode(400, "No musician found");
+                return NotFound("No musician wa found");
             return Ok(await _service.GetMusician(id));
         }
 
