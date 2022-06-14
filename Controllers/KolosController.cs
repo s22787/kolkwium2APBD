@@ -20,12 +20,18 @@ namespace kolos2.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(int id) 
         {
-            return Ok();
+            if (!await _service.MusExists(id))
+                return StatusCode(400, "No musician found");
+            return Ok(await _service.GetMusician(id));
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id) 
         {
+            if (!await _service.MusExists(id))
+                return StatusCode(400, "No musician found");
+
+            await _service.DeleteMusician(id);
             return Ok();
         }
     }

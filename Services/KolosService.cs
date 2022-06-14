@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Transactions;
 
 namespace kolos2.Services
 {
@@ -22,6 +23,7 @@ namespace kolos2.Services
             var mus = _context.Musician.Where(e => e.IdMusician == id).FirstOrDefault();
             //if(mus)
 
+
             return await _context.Musician.Where(e => e.IdMusician == id)
                 .Select(e => new MusicianDTO
                 {
@@ -35,10 +37,27 @@ namespace kolos2.Services
             
         }
 
+        public async Task<bool> MusExists(int id) 
+        {
+            return _context.Musician.Where(e => e.IdMusician == id).Any();
+        }
+
         public async Task DeleteMusician(int id) 
         {
-            /*var Musician = _context.Album.Where(e => e.IdAlbum == id).FirstOrDefault();
-            _context.Remove(Musician);*/
+            using (var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
+            {
+                var tracks= _context.MusicianTrack.Where(e => e.IdMusician == id).ToList();
+                foreach (var t in tracks)
+                {
+                    var TrackMus = _context.MusicianTrack.Where(e => e.IdMusician == t.IdMusician);
+                    _context.Remove(TrackMus);
+                    //await _context.SaveChangesAsync();
+                }
+                var mus = _context.Album.Where(e => e.IdAlbum == id).FirstOrDefault();
+                _context.Remove(mus);
+                //await _context.SaveChangesAsync();
+                transaction.Complete();
+            }
             await _context.SaveChangesAsync();
         }
 
