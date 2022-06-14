@@ -7,8 +7,9 @@ namespace kolos2.Services
 {
     public interface IKolosService
     {
+        public Task GetMusician(int id);
 
-        public Task Delete(int id);
+        public Task DeleteMusician(int id);
         public Task SaveDatabase();
     }
 }
