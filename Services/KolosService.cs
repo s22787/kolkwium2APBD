@@ -20,21 +20,13 @@ namespace kolos2.Services
 
         public async Task<MusicianDTO> GetMusician(int id) 
         {
-            var mus = _context.Musician.Where(e => e.IdMusician == id).FirstOrDefault();
-            //if(mus)
-
-
-            return await _context.Musician.Where(e => e.IdMusician == id)
-                .Select(e => new MusicianDTO
-                {
-                    FirstName=e.FirstName,
+            var mus = await _context.Musician.Where(e => e.IdMusician == id)
+                .Select(e => new MusicianDTO{FirstName=e.FirstName,
                     LastName=e.LastName,
                     Nickname=e.Nickname,
-                   
+                    Tracks=e.MusicianTrack.Select(e=>new TrackDTO{TrackName=e.Track.TrackName,Duration=e.Track.Duration}).OrderBy(e=>e.Duration).ToList()
                 }).FirstAsync();
-            
-
-            
+            return mus;
         }
 
         public async Task<bool> MusExists(int id) 

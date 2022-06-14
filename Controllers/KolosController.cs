@@ -32,7 +32,7 @@ namespace kolos2.Controllers
                 return StatusCode(400, "No musician found");
 
             await _service.DeleteMusician(id);
-            return Ok();
+            return Ok("Musician removed");
         }
     }
 }
